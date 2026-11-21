@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  /* Sampled from the SKIPPY® logo: red letters, yellow inner line, sky 3D edge; navy from the jar */
+  --color-navy: #004b87;
+  --color-navy-deep: #00365f;
+  --color-red: #e41b26;
+  --color-red-deep: #b3121b;
+  --color-yellow: #ffd400;
+  --color-yellow-soft: #fff4c2;
+  --color-sky: #28c4d8;
+  --color-sky-soft: #dcf4f8;
+  --color-cream: #fbf8f3;
+
+  --font-display: "Baloo 2", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream font-sans text-navy antialiased;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-red;
+  }
+}
+
+/* The logo's panel: white face, yellow inner line, sky-blue extruded edge (bottom-left). */
+.brand-panel {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow:
+    inset 0 0 0 4px #fff,
+    inset 0 0 0 6px var(--color-yellow),
+    -6px 6px 0 var(--color-sky);
+}
+a.brand-panel,
+.group.brand-panel {
+  transition: translate 0.25s ease, box-shadow 0.25s ease;
+}
+.group.brand-panel:hover {
+  translate: 2px -2px;
+  box-shadow:
+    inset 0 0 0 4px #fff,
+    inset 0 0 0 6px var(--color-yellow),
+    -9px 9px 0 var(--color-sky);
+}
+
+/* Red button with a pressed-in step, like the logo's 3D letters */
+.btn-red {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-red px-6 py-3.5 font-bold text-white transition;
+  box-shadow: 0 5px 0 var(--color-red-deep);
+}
+.btn-red:hover {
+  translate: 0 -2px;
+  box-shadow: 0 7px 0 var(--color-red-deep);
+}
+.btn-red:active {
+  translate: 0 4px;
+  box-shadow: 0 1px 0 var(--color-red-deep);
+}
+
+/* Arrow nudge used by every "→" link/button */
+.arrow {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.3, 0.7, 0.4, 1.4);
+}
+.group:hover .arrow,
+.group:focus-visible .arrow {
+  transform: translateX(5px);
+}
+
+/* Drawer */
+dialog.drawer {
+  margin: 0 0 0 auto;
+  max-height: 100dvh;
+  height: 100dvh;
+  max-width: 100vw;
+  translate: 100% 0;
+  transition: translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), overlay 0.35s allow-discrete,
+    display 0.35s allow-discrete;
+}
+dialog.drawer[open] {
+  translate: 0 0;
+}
+@starting-style {
+  dialog.drawer[open] {
+    translate: 100% 0;
+  }
+}
+dialog.drawer::backdrop {
+  background: rgb(0 54 95 / 0);
+  transition: background 0.35s, overlay 0.35s allow-discrete, display 0.35s allow-discrete;
+}
+dialog.drawer[open]::backdrop {
+  background: rgb(0 54 95 / 0.45);
+  backdrop-filter: blur(2px);
+}
+@starting-style {
+  dialog.drawer[open]::backdrop {
+    background: rgb(0 54 95 / 0);
+  }
+}
+
+/* Filter fade */
+[data-card] {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+[data-card].is-leaving {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after,
+  dialog.drawer::backdrop {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Hero enters once on load */
+@keyframes enter {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+[data-enter] {
+  animation: enter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s both;
+}

@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/images/logo.png';
+import sate from '../assets/images/sate.jpg';
+import { recipes } from '../data/recipes';
+---
+
+<header class="mx-auto flex max-w-6xl items-center justify-between px-4 pt-5 sm:px-6">
+  <a href="/" class="flex items-center gap-2" aria-label="SKIPPY® Dapur, beranda">
+    <Image src={logo} alt="" width={120} class="h-auto w-24 sm:w-28" loading="eager" />
+    <span class="font-display text-2xl leading-none font-bold text-red">Dapur</span>
+  </a>
+  <nav class="flex gap-6 text-sm font-bold" aria-label="Utama">
+    <a href="#resep" class="py-3 underline-offset-4 hover:underline">Resep</a>
+    <a href="#qr" class="hidden py-3 underline-offset-4 hover:underline md:inline">Buka di HP</a>
+  </nav>
+</header>
+
+<section class="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-8 pb-16 sm:px-6 md:grid-cols-[1.05fr_1fr] md:gap-14 md:pt-14 md:pb-24">
+  <div>
+    <p class="text-sm font-bold tracking-wide text-red-deep">Kumpulan Resep SKIPPY® Indonesia</p>
+    <h1 class="mt-3 font-display text-[2.75rem] leading-[0.98] font-extrabold text-balance sm:text-6xl lg:text-[4.5rem]">
+      Dari satu toples, jadi lima hidangan.
+    </h1>
+    <p class="mt-5 max-w-md text-lg leading-relaxed text-navy/80">
+      Lima resep kreasi SKIPPY® Peanut Butter, dari sate dan batagor sampai wedang ronde dan latte. Pilih satu, masak hari ini.
+    </p>
+    <a href="#resep" class="group btn-red mt-8">
+      Lihat {recipes.length} resep <span class="arrow" aria-hidden="true">→</span>
+    </a>
+
+    <ul class="mt-10 flex gap-3" aria-label="Langsung ke resep">
+      {
+        recipes.map((r) => (
+          <li>
+            <a href={`#${r.slug}`} class="group block size-14 overflow-hidden rounded-2xl ring-2 ring-white transition hover:-translate-y-0.5 hover:ring-yellow sm:size-16" title={r.title}>
+              <Image src={r.image} alt={r.title} width={128} class="size-full object-cover transition duration-300 group-hover:scale-[1.06]" />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="brand-panel p-3 sm:p-4" data-enter>
+    <Image
+      src={sate}
+      alt="Sate Ayam ala SKIPPY® dengan toples SKIPPY® Creamy"
+      widths={[480, 720, 960]}
+      sizes="(min-width: 768px) 45vw, 92vw"
+      loading="eager"
+      fetchpriority="high"
+      class="aspect-square w-full rounded-[1.1rem] object-cover object-[70%_center]"
+    />
+  </div>
+</section>

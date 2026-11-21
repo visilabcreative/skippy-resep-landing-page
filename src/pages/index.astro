@@ -1,16 +1,95 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import RecipeShowcase from '../components/RecipeShowcase.astro';
+import RecipeModal from '../components/RecipeModal.astro';
+import FooterSection from '../components/FooterSection.astro';
+import QrSection from '../components/QrSection.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <main>
+    <Hero />
+    <RecipeShowcase />
+    <QrSection />
+  </main>
+  <FooterSection />
+  <RecipeModal />
+</Layout>
+
+<script>
+  const $ = <T extends Element>(s: string, root: ParentNode = document) => root.querySelector<T>(s)!;
+  const $$ = <T extends Element>(s: string, root: ParentNode = document) => [...root.querySelectorAll<T>(s)];
+
+  // ---- Category filter ----
+  const filterBtns = $$<HTMLButtonElement>('[data-filter]');
+  const cards = $$<HTMLElement>('[data-card]');
+  let filterTimer: number | undefined;
+
+  filterBtns.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const value = btn.dataset.filter!;
+      filterBtns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      const shows = (c: HTMLElement) => (value === 'all' ? true : c.dataset.category === value);
+
+      cards.forEach((c) => !shows(c) && c.classList.add('is-leaving'));
+      clearTimeout(filterTimer);
+      filterTimer = window.setTimeout(() => {
+        cards.forEach((c) => {
+          c.hidden = !shows(c);
+          if (shows(c)) c.classList.add('is-leaving');
+        });
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => cards.forEach((c) => shows(c) && c.classList.remove('is-leaving'))),
+        );
+      }, 200);
+    }),
+  );
+
+  // ---- Recipe drawer + URL hash sync ----
+  const drawer = $<HTMLDialogElement>('#recipe-drawer');
+  const articles = $$<HTMLElement>('[data-recipe]', drawer);
+  const slugs = articles.map((a) => a.dataset.recipe!);
+  const counter = $<HTMLElement>('[data-counter]', drawer);
+  const scroller = $<HTMLElement>('[data-scroll]', drawer);
+  let current = -1;
+
+  function openRecipe(slug: string) {
+    const idx = slugs.indexOf(slug);
+    if (idx < 0) return;
+    current = idx;
+    articles.forEach((a, i) => (a.hidden = i !== idx));
+    drawer.setAttribute('aria-label', $('[data-title]', articles[idx]).textContent!.trim());
+    counter.textContent = `${idx + 1} / ${slugs.length}`;
+    scroller.scrollTop = 0;
+    if (!drawer.open) drawer.showModal();
+  }
+
+  const syncFromHash = () => {
+    const slug = decodeURIComponent(location.hash.slice(1));
+    if (slugs.includes(slug)) openRecipe(slug);
+    else if (drawer.open) drawer.close();
+  };
+  window.addEventListener('hashchange', syncFromHash);
+  syncFromHash();
+
+  $$<HTMLButtonElement>('[data-nav]', drawer).forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const next = (current + Number(btn.dataset.nav) + slugs.length) % slugs.length;
+      location.replace(`#${slugs[next]}`);
+    }),
+  );
+
+  drawer.addEventListener('close', () => {
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  });
+  // Click on the backdrop closes the drawer
+  drawer.addEventListener('click', (e) => e.target === drawer && drawer.close());
+
+  // ---- Ingredient checklist reset ----
+  $$<HTMLButtonElement>('[data-reset]', drawer).forEach((btn) =>
+    btn.addEventListener('click', () =>
+      $$<HTMLInputElement>('input[type=checkbox]', btn.closest('section')!).forEach((i) => (i.checked = false)),
+    ),
+  );
+</script>

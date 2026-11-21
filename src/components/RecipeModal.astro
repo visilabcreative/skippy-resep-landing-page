@@ -1,0 +1,110 @@
+---
+import { Image } from 'astro:assets';
+import { recipes } from '../data/recipes';
+---
+
+<dialog
+  id="recipe-drawer"
+  class="drawer w-full overflow-hidden bg-cream p-0 text-navy shadow-2xl sm:w-[min(760px,92vw)] sm:rounded-l-[2rem]"
+  aria-label="Resep"
+>
+  <div class="flex h-full flex-col">
+    <div class="flex items-center justify-between gap-2 border-b-2 border-navy/10 bg-cream/95 px-4 py-3 backdrop-blur sm:px-6">
+      <div class="flex gap-2">
+        <button type="button" data-nav="-1" class="group nav-btn" aria-label="Resep sebelumnya">
+          <span class="arrow inline-block rotate-180" aria-hidden="true">→</span>
+          <span class="hidden sm:inline">Sebelumnya</span>
+        </button>
+        <button type="button" data-nav="1" class="group nav-btn" aria-label="Resep berikutnya">
+          <span class="hidden sm:inline">Berikutnya</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+      <p class="text-sm font-bold text-navy/60" data-counter aria-live="polite"></p>
+      <form method="dialog">
+        <button class="grid size-10 cursor-pointer place-items-center rounded-full bg-navy text-xl text-cream transition hover:rotate-90" aria-label="Tutup">
+          ×
+        </button>
+      </form>
+    </div>
+
+    <div class="flex-1 overflow-y-auto overscroll-contain" data-scroll>
+      {
+        recipes.map((r, i) => (
+          <article data-recipe={r.slug} hidden class="px-4 pt-6 pb-16 sm:px-8">
+            <div class="flex items-start gap-4">
+              <span class="font-display text-6xl leading-none font-bold text-red sm:text-7xl" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <p class="w-fit rounded-full bg-yellow-soft px-2.5 py-0.5 text-xs font-bold text-red-deep">
+                  {r.label}
+                  {r.meta && ` · ${r.meta}`}
+                </p>
+                <h2 class="mt-2 font-display text-3xl leading-tight font-bold sm:text-4xl" data-title>
+                  {r.title}
+                </h2>
+                <p class="mt-1 text-navy/75">{r.tagline}</p>
+              </div>
+            </div>
+
+            <Image
+              src={r.image}
+              alt={r.imageAlt}
+              widths={[480, 720, 1040]}
+              sizes="(min-width: 640px) 700px, 100vw"
+              class="mt-6 aspect-[16/10] w-full rounded-3xl object-cover"
+            />
+
+            <section class="mt-8" aria-label="Bahan-bahan">
+              <div class="flex items-baseline justify-between">
+                <h3 class="font-display text-2xl font-bold">Bahan</h3>
+                <button type="button" data-reset class="cursor-pointer text-sm font-bold text-red-deep underline-offset-4 hover:underline">
+                  Reset centang
+                </button>
+              </div>
+              <p class="mt-1 text-sm text-navy/60">Centang bahan yang sudah siap.</p>
+              <div class="mt-4 grid gap-5">
+                {r.ingredients.map((g) => (
+                  <div class="brand-panel ml-1.5 p-5 sm:p-6">
+                    <h4 class="font-display text-lg font-bold">{g.title}</h4>
+                    <ul class="mt-2">
+                      {g.items.map((it) => (
+                        <li class="border-b border-dashed border-navy/15 last:border-0">
+                          <label class="flex cursor-pointer items-center gap-3 py-2.5 text-[1.02rem] has-checked:text-navy/40">
+                            <input type="checkbox" class="size-5 shrink-0 cursor-pointer accent-red" />
+                            <span class="flex-1 [:checked~&]:line-through">{it.name}</span>
+                            <span class="text-right font-bold whitespace-nowrap [:checked~&]:line-through">{it.qty}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section class="mt-10" aria-label="Cara membuat">
+              <h3 class="font-display text-2xl font-bold">Cara membuat</h3>
+              <ol class="mt-4 grid gap-5">
+                {r.steps.map((s, n) => (
+                  <li class="flex gap-4">
+                    <span class="grid size-9 shrink-0 place-items-center rounded-full bg-navy font-bold text-yellow">{n + 1}</span>
+                    <p class="pt-1 text-[1.05rem] leading-relaxed">{s}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</dialog>
+
+<style>
+  @reference "../styles/global.css";
+  .nav-btn {
+    @apply inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-navy px-3 py-2 text-sm font-bold transition hover:bg-navy hover:text-cream;
+  }
+</style>

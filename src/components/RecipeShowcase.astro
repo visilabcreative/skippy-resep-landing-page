@@ -1,0 +1,75 @@
+---
+import { Image } from 'astro:assets';
+import { recipes, CATEGORIES } from '../data/recipes';
+
+const filters = [
+  { value: 'all', label: `Semua (${recipes.length})` },
+  ...CATEGORIES.map((c) => ({ value: c, label: c })),
+];
+---
+
+<section id="resep" class="mx-auto max-w-6xl scroll-mt-6 px-4 pb-20 sm:px-6">
+  <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <h2 class="font-display text-4xl font-bold sm:text-5xl">Pilih resepmu</h2>
+
+    <div
+      role="group"
+      aria-label="Filter kategori"
+      class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0"
+    >
+      {
+        filters.map((f, i) => (
+          <button
+            type="button"
+            data-filter={f.value}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            class="shrink-0 cursor-pointer min-h-11 rounded-full border-2 border-navy px-4 py-2 text-sm font-bold whitespace-nowrap transition hover:bg-sky-soft aria-pressed:bg-navy aria-pressed:text-cream"
+          >
+            {f.label}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-grid>
+    {
+      recipes.map((r, i) => (
+        <li data-card data-category={r.category}>
+          <article class="group brand-panel relative flex h-full flex-col p-2.5">
+            <div class="overflow-hidden rounded-[1.1rem] bg-yellow-soft">
+              <Image
+                src={r.image}
+                alt={r.imageAlt}
+                widths={[400, 640, 800]}
+                sizes="(min-width: 1024px) 360px, (min-width: 640px) 46vw, 92vw"
+                class="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+              />
+            </div>
+            <div class="flex flex-1 flex-col px-3 pt-4 pb-3">
+              <p class="text-xs font-bold tracking-wide text-red-deep uppercase">
+                {String(i + 1).padStart(2, '0')} · {r.label}
+              </p>
+              <h3 class="mt-1.5 font-display text-2xl leading-tight font-bold">{r.title}</h3>
+              <p class="mt-2 flex-1 text-[0.95rem] leading-relaxed text-navy/75">{r.description}</p>
+              <a
+                href={`#${r.slug}`}
+                data-open={r.slug}
+                class="mt-4 inline-flex w-fit items-center gap-1.5 font-bold text-navy after:absolute after:inset-0 group-hover:text-red-deep"
+              >
+                Lihat resep <span class="arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+          </article>
+        </li>
+      ))
+    }
+    <li data-card data-category="teaser">
+      <div class="flex h-full min-h-56 flex-col justify-end rounded-3xl bg-navy p-7 text-cream shadow-[-6px_6px_0_var(--color-sky)]">
+        <p class="text-xs font-bold tracking-widest text-yellow uppercase">Segera hadir</p>
+        <p class="mt-2 font-display text-3xl leading-tight font-bold">Coba resep lain nanti</p>
+        <p class="mt-2 text-cream/80">Ikuti SKIPPY® Indonesia untuk inspirasi resep terbaru.</p>
+      </div>
+    </li>
+  </ul>
+</section>
