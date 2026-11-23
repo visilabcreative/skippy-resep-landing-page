@@ -123,8 +123,8 @@ export const recipes: Recipe[] = [
     ],
     steps: [
       "Panaskan oven hingga 175°C (350°F). Siapkan loyang 32,5 × 23 cm yang dilapisi mentega.",
-      "Aduk peanut butter, butter, gula merah, gula pasir, dan vanili selama 5 menit hingga kental dan seperti krim. Aduk telur, terigu, dan garam dengan mixer, lalu tambahkan cokelat keping. Oleskan merata ke dalam loyang.",
-      "Panggang 25 menit hingga agak kecokelatan. Dinginkan di rak kawat; segera taburi sisa cokelat keping, biarkan 5 menit, ratakan, lalu taburi potongan stik toffee. Dinginkan sepenuhnya, potong menjadi stik.",
+      "Aduk peanut butter, butter, gula merah, gula pasir, dan vanili selama 5 menit hingga kental dan seperti krim. Lelehkan cokelat keping dan bagi menjadi 2 porsi. Aduk telur, terigu, dan garam dengan mixer, lalu tambahkan lelehan cokelat keping dari porsi yang lebih besar. Tuang adonan ke dalam loyang dan ratakan.",
+      "Panggang 25 menit hingga agak kecokelatan. Dinginkan di rak kawat; segera tuang sisa lelehan cokelat keping, biarkan 5 menit, ratakan, lalu taburi potongan stik toffee. Dinginkan sepenuhnya, potong menjadi stik.",
     ],
   },
   {
